@@ -2,6 +2,7 @@ package as7262
 
 import (
 	"encoding/binary"
+	"fmt"
 	"log"
 	"time"
 
@@ -110,21 +111,64 @@ func (a *AS7276) checkTxPending() error {
 }
 
 func (a *AS7276) setConfig() error {
-	if err := a.writeReg(0x04, []byte{0x56}); err != nil {
+	fmt.Println("setConfig")
+	if err := a.writeReg(0x04, []byte{0x60}); err != nil {
 		return err
 	}
 	if err := a.writeReg(0x06, []byte{0xFF}); err != nil {
+		return err
+	}
+	// LED OFF
+	if err := a.writeReg(0x07, []byte{0x00}); err != nil {
 		return err
 	}
 	return nil
 
 }
 
-func (a *AS7276) ReadAll() (Spectrum, error) {
-	// LED ON
-	if err := a.writeReg(0x07, []byte{0x09}); err != nil {
-		return Spectrum{}, err
+func (a *AS7276) clearData() error {
+	fmt.Println("clearData")
+	value, err := a.readReg(0x04)
+	if err != nil {
+		return err
 	}
+	value = setBit(value, 1)
+	if err := a.writeReg(0x04, []byte{value}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *AS7276) setMode(mode uint8) error {
+	fmt.Println("setmode")
+
+	if mode > 3 {
+		mode = 3
+	}
+
+	control, err := a.readReg(0x04)
+	if err != nil {
+		return err
+	}
+	control &= 0xf3
+	control |= (mode << 2)
+	if err := a.writeReg(0x04), []byte{control}; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AS7276) ReadAll() (Spectrum, error) {
+	fmt.Println("readall")
+	a.clearData()
+	a.setMode(3)
+	time.Sleep(time.Millisecond * 750)
+
+	// LED ON
+	// if err := a.writeReg(0x07, []byte{0x09}); err != nil {
+	// 	return Spectrum{}, err
+	// }
 
 	vh, err := a.readReg(0x08)
 	if err != nil {
@@ -177,9 +221,9 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 	}
 
 	// LED OFF
-	if err := a.writeReg(0x07, []byte{0x00}); err != nil {
-		return Spectrum{}, err
-	}
+	// if err := a.writeReg(0x07, []byte{0x00}); err != nil {
+	// 	return Spectrum{}, err
+	// }
 
 	v := binary.LittleEndian.Uint16([]byte{vh, vl})
 	b := binary.LittleEndian.Uint16([]byte{bh, bl})
@@ -189,4 +233,18 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 	r := binary.LittleEndian.Uint16([]byte{rh, rl})
 
 	return Spectrum{v, b, g, y, o, r}, nil
+}
+
+func clearBit(n byte, pos uint8) byte {
+	mask := ^(1 << pos)
+	n &= byte(mask)
+	return n
+}
+func setBit(n byte, pos uint8) byte {
+	n |= (1 << pos)
+	return n
+}
+func hasBit(n byte, pos uint8) bool {
+	val := n & (1 << pos)
+	return (val > 0)
 }
