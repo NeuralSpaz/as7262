@@ -159,11 +159,32 @@ func (a *AS7276) setMode(mode uint8) error {
 	return nil
 }
 
+func (a *AS7276) dataReady() (bool, error) {
+	fmt.Println("dataReady?")
+
+	control, err := a.readReg(0x04)
+	if err != nil {
+		return false, err
+	}
+	return hasBit(control, 1), err
+
+}
+
 func (a *AS7276) ReadAll() (Spectrum, error) {
 	fmt.Println("readall")
 	a.clearData()
 	a.setMode(3)
-	time.Sleep(time.Millisecond * 750)
+	ready, err := a.dataReady()
+	if err != nil {
+		log.Println(err)
+	}
+	for !ready {
+		time.Sleep(time.Millisecond * 50)
+		ready, err = a.dataReady()
+		if err != nil {
+			log.Println(err)
+		}
+	}
 
 	// LED ON
 	// if err := a.writeReg(0x07, []byte{0x09}); err != nil {
