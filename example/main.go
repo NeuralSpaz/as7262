@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/NeuralSpaz/as7262"
 
@@ -29,4 +30,13 @@ func main() {
 	}
 	defer sensor2.Close()
 	log.Println(sensor2)
+
+	for {
+		<-time.After(time.Second)
+		data, err := sensor.ReadAll()
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println(data)
+	}
 }

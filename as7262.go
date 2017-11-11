@@ -27,7 +27,7 @@ func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7276) error) 
 	if err != nil {
 		log.Panic(err)
 	}
-	// a.setConfig()
+	a.setConfig()
 	return a, nil
 }
 func (a *AS7276) Close() error {
