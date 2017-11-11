@@ -83,6 +83,7 @@ func (a *AS7276) readReg(reg byte) (byte, error) {
 
 func (a *AS7276) checkRxPending() error {
 	for {
+		log.Println("checking rx pending")
 		rx := make([]byte, 1)
 		if err := a.dev.ReadReg(I2C_AS72XX_SLAVE_STATUS_REG, rx); err != nil {
 			return err
@@ -90,12 +91,13 @@ func (a *AS7276) checkRxPending() error {
 		if rx[0]&I2C_AS72XX_SLAVE_RX_VALID == 0 {
 			return nil
 		}
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Millisecond * 10)
 	}
 }
 
 func (a *AS7276) checkTxPending() error {
 	for {
+		log.Println("checking tx pending")
 		rx := make([]byte, 1)
 		if err := a.dev.ReadReg(I2C_AS72XX_SLAVE_STATUS_REG, rx); err != nil {
 			return err
@@ -103,7 +105,7 @@ func (a *AS7276) checkTxPending() error {
 		if rx[0]&I2C_AS72XX_SLAVE_TX_VALID == 0 {
 			return nil
 		}
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Millisecond * 10)
 	}
 }
 
