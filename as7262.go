@@ -172,8 +172,14 @@ func (a *AS7276) dataReady() (bool, error) {
 
 func (a *AS7276) ReadAll() (Spectrum, error) {
 	fmt.Println("readall")
-	a.clearData()
-	a.setMode(3)
+	err := a.clearData()
+	if err != nil {
+		log.Println(err)
+	}
+	err = a.setMode(3)
+	if err != nil {
+		log.Println(err)
+	}
 	ready, err := a.dataReady()
 	if err != nil {
 		log.Println(err)
