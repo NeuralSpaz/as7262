@@ -3,6 +3,7 @@ package as7262
 import (
 	"encoding/binary"
 	"log"
+	"time"
 
 	"github.com/NeuralSpaz/i2cmux"
 )
@@ -89,6 +90,7 @@ func (a *AS7276) checkRxPending() error {
 		if rx[0]&I2C_AS72XX_SLAVE_RX_VALID == 0 {
 			return nil
 		}
+		time.Sleep(time.Millisecond)
 	}
 }
 
@@ -101,6 +103,7 @@ func (a *AS7276) checkTxPending() error {
 		if rx[0]&I2C_AS72XX_SLAVE_TX_VALID == 0 {
 			return nil
 		}
+		time.Sleep(time.Millisecond)
 	}
 }
 
