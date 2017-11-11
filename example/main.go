@@ -24,12 +24,12 @@ func main() {
 	defer sensor.Close()
 	log.Println(sensor)
 
-	sensor2, err := as7262.NewSensor(mux, 1)
-	if err != nil {
-		log.Panic(err)
-	}
-	defer sensor2.Close()
-	log.Println(sensor2)
+	// sensor2, err := as7262.NewSensor(mux, 1)
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
+	// defer sensor2.Close()
+	// log.Println(sensor2)
 
 	for {
 		<-time.After(time.Second)
