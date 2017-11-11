@@ -153,7 +153,7 @@ func (a *AS7276) setMode(mode uint8) error {
 	}
 	control &= 0xf3
 	control |= (mode << 2)
-	if err := a.writeReg(0x04), []byte{control}; err != nil {
+	if err := a.writeReg(0x04, []byte{control}); err != nil {
 		return err
 	}
 	return nil
