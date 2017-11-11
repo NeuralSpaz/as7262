@@ -52,7 +52,7 @@ func (a *AS7276) writeReg(reg byte, buf []byte) error {
 		return err
 	}
 
-	if err := a.checkPending(); err != nil {
+	if err := a.checkTxPending(); err != nil {
 		return err
 	}
 
