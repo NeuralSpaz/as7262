@@ -115,10 +115,6 @@ func (a *AS7276) setConfig() error {
 
 }
 
-type Spectrum struct {
-	V, B, G, Y, O, R uint16
-}
-
 func (a *AS7276) ReadAll() (Spectrum, error) {
 	// LED ON
 	if err := a.writeReg(0x07, []byte{0x09}); err != nil {
