@@ -112,6 +112,11 @@ func (a *AS7276) checkTxPending() error {
 
 func (a *AS7276) setConfig() error {
 	fmt.Println("setConfig")
+
+	if err := a.writeReg(0x04, []byte{0xE0}); err != nil {
+		return err
+	}
+	time.Sleep(time.Millisecond * 500)
 	if err := a.writeReg(0x04, []byte{0x60}); err != nil {
 		return err
 	}
