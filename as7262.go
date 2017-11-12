@@ -90,6 +90,7 @@ func (a *AS7276) checkRxPending() error {
 		if err := a.dev.ReadReg(I2C_AS72XX_SLAVE_STATUS_REG, rx); err != nil {
 			return err
 		}
+		log.Printf("%02x rx\n", rx)
 		if rx[0]&I2C_AS72XX_SLAVE_RX_VALID == 0 {
 			log.Println("checking rx ok")
 		}
