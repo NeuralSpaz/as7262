@@ -1,7 +1,6 @@
 package as7262
 
 import (
-	"encoding/binary"
 	"fmt"
 	"log"
 	"time"
@@ -45,6 +44,7 @@ const (
 )
 
 func (a *AS7276) writeReg(reg byte, buf []byte) error {
+	log.Println("write reg")
 	if err := a.checkTxPending(); err != nil {
 		return err
 	}
@@ -64,6 +64,7 @@ func (a *AS7276) writeReg(reg byte, buf []byte) error {
 }
 
 func (a *AS7276) readReg(reg byte) (byte, error) {
+	log.Println("read reg")
 	if err := a.checkTxPending(); err != nil {
 		return 0, err
 	}
@@ -90,7 +91,7 @@ func (a *AS7276) checkRxPending() error {
 			return err
 		}
 		if rx[0]&I2C_AS72XX_SLAVE_RX_VALID == 0 {
-			return nil
+			log.Println("checking rx ok")
 		}
 		time.Sleep(time.Millisecond * 10)
 	}
@@ -104,6 +105,7 @@ func (a *AS7276) checkTxPending() error {
 			return err
 		}
 		if rx[0]&I2C_AS72XX_SLAVE_TX_VALID == 0 {
+			log.Println("checking tx ok")
 			return nil
 		}
 		time.Sleep(time.Millisecond * 10)
@@ -202,69 +204,70 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 	// 	return Spectrum{}, err
 	// }
 
-	vh, err := a.readReg(0x08)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	vl, err := a.readReg(0x09)
-	if err != nil {
-		return Spectrum{}, err
-	}
-
-	bh, err := a.readReg(0x0a)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	bl, err := a.readReg(0x0b)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	gh, err := a.readReg(0x0c)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	gl, err := a.readReg(0x0d)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	yh, err := a.readReg(0x0e)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	yl, err := a.readReg(0x0f)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	oh, err := a.readReg(0x10)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	ol, err := a.readReg(0x11)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	rh, err := a.readReg(0x12)
-	if err != nil {
-		return Spectrum{}, err
-	}
-	rl, err := a.readReg(0x13)
-	if err != nil {
-		return Spectrum{}, err
-	}
-
-	// LED OFF
-	// if err := a.writeReg(0x07, []byte{0x00}); err != nil {
+	// vh, err := a.readReg(0x08)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// vl, err := a.readReg(0x09)
+	// if err != nil {
 	// 	return Spectrum{}, err
 	// }
 
-	v := binary.LittleEndian.Uint16([]byte{vh, vl})
-	b := binary.LittleEndian.Uint16([]byte{bh, bl})
-	g := binary.LittleEndian.Uint16([]byte{gh, gl})
-	y := binary.LittleEndian.Uint16([]byte{yh, yl})
-	o := binary.LittleEndian.Uint16([]byte{oh, ol})
-	r := binary.LittleEndian.Uint16([]byte{rh, rl})
+	// bh, err := a.readReg(0x0a)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// bl, err := a.readReg(0x0b)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// gh, err := a.readReg(0x0c)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// gl, err := a.readReg(0x0d)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// yh, err := a.readReg(0x0e)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// yl, err := a.readReg(0x0f)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// oh, err := a.readReg(0x10)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// ol, err := a.readReg(0x11)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// rh, err := a.readReg(0x12)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
+	// rl, err := a.readReg(0x13)
+	// if err != nil {
+	// 	return Spectrum{}, err
+	// }
 
-	return Spectrum{v, b, g, y, o, r}, nil
+	// // LED OFF
+	// // if err := a.writeReg(0x07, []byte{0x00}); err != nil {
+	// // 	return Spectrum{}, err
+	// // }
+
+	// v := binary.LittleEndian.Uint16([]byte{vh, vl})
+	// b := binary.LittleEndian.Uint16([]byte{bh, bl})
+	// g := binary.LittleEndian.Uint16([]byte{gh, gl})
+	// y := binary.LittleEndian.Uint16([]byte{yh, yl})
+	// o := binary.LittleEndian.Uint16([]byte{oh, ol})
+	// r := binary.LittleEndian.Uint16([]byte{rh, rl})
+
+	// return Spectrum{v, b, g, y, o, r}, nil
+	return Spectrum{}, nil
 }
 
 func clearBit(n byte, pos uint8) byte {
