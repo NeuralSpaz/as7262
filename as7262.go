@@ -170,18 +170,51 @@ func (a *AS7276) setMode(mode uint8) error {
 
 func (a *AS7276) dataReady() (bool, error) {
 	fmt.Println("dataReady?")
+	var control byte
+	err := retry(10, time.Millisecond*50, func() (err error) {
+		control, err = a.readReg(0x04)
+		return
+	})
 
-	control, err := a.readReg(0x04)
 	if err != nil {
+		log.Println(err)
 		return false, err
 	}
-	return hasBit(control, 1), err
 
+	ready := hasBit(control, 1)
+
+	return ready, err
+
+}
+
+func retry(attempts int, sleep time.Duration, fn func() error) (err error) {
+	for i := 0; ; i++ {
+		err = fn()
+		if err == nil {
+			return
+		}
+
+		if i >= (attempts - 1) {
+			break
+		}
+
+		time.Sleep(sleep)
+
+		log.Println("retrying after error:", err)
+	}
+	return fmt.Errorf("after %d attempts, last error: %s", attempts, err)
 }
 
 func (a *AS7276) ReadAll() (Spectrum, error) {
 	fmt.Println("readall")
+
+	// err := retry(10, time.Millisecond*50, func() (err error) {
 	err := a.clearData()
+
+	if err != nil {
+		log.Println(err)
+	}
+
 	if err != nil {
 		log.Println(err)
 	}
