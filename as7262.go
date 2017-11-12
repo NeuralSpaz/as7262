@@ -93,6 +93,7 @@ func (a *AS7276) checkRxPending() error {
 		log.Printf("%02x rx\n", rx)
 		if rx[0]&I2C_AS72XX_SLAVE_RX_VALID == 0 {
 			log.Println("checking rx ok")
+			return nil
 		}
 		time.Sleep(time.Millisecond * 10)
 	}
