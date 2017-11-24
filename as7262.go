@@ -227,7 +227,7 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 		log.Println(err)
 	}
 	for !ready {
-		time.Sleep(time.Millisecond * 50)
+		// time.Sleep(time.Millisecond * 50)
 		ready, err = a.dataReady()
 		if err != nil {
 			log.Println(err)
