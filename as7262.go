@@ -104,6 +104,7 @@ func (a *AS7276) checkTxPending() error {
 		log.Println("checking tx pending")
 		rx := make([]byte, 1)
 		if err := a.dev.ReadReg(I2C_AS72XX_SLAVE_STATUS_REG, rx); err != nil {
+			log.Printf("rx error %02x %v\n", rx, err)
 			return err
 		}
 		if rx[0]&I2C_AS72XX_SLAVE_TX_VALID == 0 {
