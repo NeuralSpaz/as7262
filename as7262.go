@@ -279,11 +279,11 @@ func (a *AS7276) setConfig() error {
 	if a.debug {
 		fmt.Println("setConfig")
 	}
-	if err := a.virtualRegisterWrite(0x04, 0xE0); err != nil {
-		return err
-	}
-	time.Sleep(time.Millisecond * 500)
-	if err := a.virtualRegisterWrite(0x04, 0x60); err != nil {
+	// if err := a.virtualRegisterWrite(0x04, 0xE0); err != nil {
+	// 	return err
+	// }
+	// time.Sleep(time.Millisecond * 500)
+	if err := a.virtualRegisterWrite(0x04, 0x3C); err != nil {
 		return err
 	}
 	if err := a.virtualRegisterWrite(0x06, 0xFF); err != nil {
