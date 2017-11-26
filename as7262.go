@@ -303,7 +303,7 @@ func (a *AS7276) LEDoff() error {
 
 func (a *AS7276) LEDon() error {
 	fmt.Println("ledon")
-	err := a.virtualRegisterWrite(0x07, 0x00)
+	err := a.virtualRegisterWrite(0x07, 0x09)
 	return err
 }
 
@@ -380,16 +380,10 @@ func retry(attempts int, sleep time.Duration, fn func() error) (err error) {
 func (a *AS7276) ReadAll() (Spectrum, error) {
 	fmt.Println("readall")
 
-	// err := retry(10, time.Millisecond *10*50, func() (err error) {
-	// err := a.clearData()
+	if err := a.LEDon(); err != nil {
+		log.Println(err)
+	}
 
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-
-	// if err != nil {
-	// 	log.Println(err)
-	// }
 	if err := a.setMode(3); err != nil {
 		log.Println(err)
 	}
@@ -403,11 +397,6 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 		if err != nil {
 			log.Println(err)
 		}
-	}
-
-	// LED ON
-	if err := a.virtualRegisterWrite(0x07, 0x09); err != nil {
-		return Spectrum{}, err
 	}
 
 	vh, err := a.virtualRegisterRead(0x08)
