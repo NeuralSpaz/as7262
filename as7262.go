@@ -36,6 +36,7 @@ func NewSensor(bus string, opts ...func(*AS7276) error) (*AS7276, error) {
 	}
 	// a.dev = *dev
 	a.setConfig()
+	a.debug = true
 	return a, nil
 }
 
