@@ -290,11 +290,21 @@ func (a *AS7276) setConfig() error {
 	// 	return err
 	// }
 	// LED OFF
-	if err := a.virtualRegisterWrite(0x07, 0x00); err != nil {
-		return err
-	}
-	return nil
+	err := a.LEDoff()
+	return err
 
+}
+
+func (a *AS7276) LEDoff() error {
+	fmt.Println("ledoff")
+	err := a.virtualRegisterWrite(0x07, 0x00)
+	return err
+}
+
+func (a *AS7276) LEDon() error {
+	fmt.Println("ledon")
+	err := a.virtualRegisterWrite(0x07, 0x00)
+	return err
 }
 
 // func (a *AS7276) clearData() error {

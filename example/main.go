@@ -40,5 +40,6 @@ func main() {
 		log.Println(err)
 	}
 	fmt.Println(data)
+	sensor.LEDoff()
 	// }
 }
