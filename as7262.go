@@ -7,13 +7,13 @@ import (
 	"math"
 	"time"
 
-	"golang.org/x/exp/io/i2c"
+	"github.com/NeuralSpaz/i2cmux"
 	// "github.com/NeuralSpaz/i2cmux"
 )
 
 type AS7276 struct {
-	// dev *i2cmux.Device
-	dev   *i2c.Device
+	dev *i2cmux.Device
+	// dev   *i2c.Device
 	debug bool
 }
 
@@ -23,24 +23,39 @@ type Spectrum struct {
 	Vcal, Bcal, Gcal, Ycal, Ocal, Rcal float32
 }
 
-func NewSensor(bus string, opts ...func(*AS7276) error) (*AS7276, error) {
+func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7276) error) (*AS7276, error) {
 	a := new(AS7276)
 
 	for _, option := range opts {
 		option(a)
 	}
 	var err error
-	// a.dev, err := i2c.Open(bus, 0x49)
-	a.dev, err = i2c.Open(&i2c.Devfs{Dev: bus}, 0x49)
-	// a.dev, err = i2cmux.Open(0x49, mux, port)
+	a.dev, err = i2cmux.Open(0x49, mux, port)
 	if err != nil {
 		log.Panic(err)
 	}
-	// a.dev = *dev
 	a.setConfig()
-	a.debug = true
 	return a, nil
 }
+
+// func NewSensor(bus string, opts ...func(*AS7276) error) (*AS7276, error) {
+// 	a := new(AS7276)
+
+// 	for _, option := range opts {
+// 		option(a)
+// 	}
+// 	var err error
+// 	// a.dev, err := i2c.Open(bus, 0x49)
+// 	a.dev, err = i2c.Open(&i2c.Devfs{Dev: bus}, 0x49)
+// 	// a.dev, err = i2cmux.Open(0x49, mux, port)
+// 	if err != nil {
+// 		log.Panic(err)
+// 	}
+// 	// a.dev = *dev
+// 	a.setConfig()
+// 	a.debug = true
+// 	return a, nil
+// }
 
 func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 	// if a.debug {
