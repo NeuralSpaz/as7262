@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/NeuralSpaz/as7262"
 	"github.com/NeuralSpaz/as7263"
 	"github.com/NeuralSpaz/pca9548a"
+	"github.com/nats-io/nats"
 )
 
 func main() {
@@ -40,19 +42,26 @@ func main() {
 	}
 	defer seven.Close()
 
-	// sensor, err := as7262.NewSensor("/dev/i2c-1")
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
+	servers := "nats://127.0.0.1:4222"
+	hostname, _ := os.Hostname()
+	name := nats.Name(hostname)
+	nc, err := nats.Connect(servers, name)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	c, _ := nats.NewEncodedConn(nc, "json")
+	defer c.Close()
 
-	// log.Println(one)
+	catholyteVis := make(chan as7262.Spectrum, 10)
+	catholyteNIR := make(chan as7263.Spectrum, 10)
 
-	// sensor2, err := as7262.NewSensor(mux, 1)
-	// if err != nil {
-	// 	log.Panic(err)
-	// }
-	// defer sensor2.Close()
-	// log.Println(sensor2)
+	anolyteVis := make(chan as7262.Spectrum, 10)
+	anolyteNIR := make(chan as7263.Spectrum, 10)
+
+	c.BindSendChan("catholyte.vis", catholyteVis)
+	c.BindSendChan("catholyte.nir", catholyteNIR)
+	c.BindSendChan("anolyte.vis", anolyteVis)
+	c.BindSendChan("anolyte.nir", anolyteNIR)
 
 	for {
 		// <-time.After(time.Second)
@@ -60,28 +69,34 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Printf("%+#v\n", zeroData)
+		// fmt.Printf("%+#v\n", zeroData)
 		zero.LEDoff()
 
 		oneData, err := one.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Printf("%+#v\n", oneData)
+		// fmt.Printf("%+#v\n", oneData)
 		one.LEDoff()
 
 		sixData, err := six.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Printf("%+#v\n", sixData)
+		// fmt.Printf("%+#v\n", sixData)
 		six.LEDoff()
 
 		sevenData, err := seven.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Printf("%+#v\n", sevenData)
+		// fmt.Printf("%+#v\n", sevenData)
 		seven.LEDoff()
+
+		catholyteVis <- zeroData
+		catholyteNIR <- oneData
+		anolyteNIR <- sixData
+		anolyteVis <- sevenData
+
 	}
 }
