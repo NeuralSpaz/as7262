@@ -21,19 +21,19 @@ func main() {
 	}
 	defer zero.Close()
 
-	one, err := as7262.NewSensor(mux, 0)
+	one, err := as7262.NewSensor(mux, 1)
 	if err != nil {
 		log.Panic(err)
 	}
 	defer one.Close()
 
-	six, err := as7262.NewSensor(mux, 0)
+	six, err := as7262.NewSensor(mux, 6)
 	if err != nil {
 		log.Panic(err)
 	}
 	defer six.Close()
 
-	seven, err := as7262.NewSensor(mux, 0)
+	seven, err := as7262.NewSensor(mux, 7)
 	if err != nil {
 		log.Panic(err)
 	}
