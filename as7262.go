@@ -276,9 +276,9 @@ func (a *AS7276) Close() error {
 // }
 
 func (a *AS7276) setConfig() error {
-	if a.debug {
-		fmt.Println("setConfig")
-	}
+	// if a.debug {
+	fmt.Println("setConfig")
+	// }
 	if err := a.virtualRegisterWrite(0x04, 0xE0); err != nil {
 		return err
 	}
