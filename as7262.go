@@ -42,7 +42,7 @@ func NewSensor(bus string, opts ...func(*AS7276) error) (*AS7276, error) {
 
 func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 	// if a.debug {
-	log.Printf("virtualRegisterRead(%02x,%02x)\n", register, data)
+	log.Printf("virtualRegisterWrite(%02x,%02x)\n", register, data)
 	// }
 	const (
 		SlaveStatusRegister byte = 0x00
@@ -60,7 +60,7 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 		// if a.debug {
 		log.Printf("Status Register Contents: %02x\n", rx[0])
 		// }
-		if rx[0] == 0x00 {
+		if rx[0]&0x03 == 0x00 {
 			break
 		}
 		time.Sleep(time.Millisecond * 10)
@@ -86,7 +86,7 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 		// if a.debug {
 		log.Printf("Status Register Contents: %02x\n", rx[0])
 		// }
-		if rx[0] == 0x00 {
+		if rx[0]&0x03 == 0x00 {
 			break
 		}
 		time.Sleep(time.Millisecond * 10)
@@ -121,11 +121,11 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 		// if a.debug {
 		log.Printf("Status Register Contents: %02x\n", rx[0])
 		// }
-		if rx[0] == 0x00 {
+		if rx[0]&0x03 == 0x00 {
 			break
 		}
 		// if there is data pending read it but thats all
-		if rx[0] == 0x01 {
+		if rx[0]&0x03 == 0x01 {
 			discard := make([]byte, 1)
 			if err := a.dev.ReadReg(SlaveStatusRegister, discard); err != nil {
 				log.Fatalln(err)
@@ -157,7 +157,7 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 		// if a.debug {
 		log.Printf("Status Register Contents: %02x\n", rx[0])
 		// }
-		if rx[0] == 0x01 {
+		if rx[0]&0x03 == 0x01 {
 			break
 		}
 
