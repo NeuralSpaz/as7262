@@ -12,7 +12,8 @@ import (
 
 type AS7276 struct {
 	// dev *i2cmux.Device
-	dev *i2c.Device
+	dev   *i2c.Device
+	debug bool
 }
 
 // Spectrum (450nm, 500nm, 550nm, 570nm, 600nm, 650nm).
@@ -39,35 +40,59 @@ func NewSensor(bus string, opts ...func(*AS7276) error) (*AS7276, error) {
 }
 
 func (a *AS7276) virtualRegisterWrite(register, data byte) error {
+	if a.debug {
+		log.Printf("virtualRegisterRead(%02x,%02x)\n", register, data)
+	}
 	const (
 		SlaveStatusRegister byte = 0x00
 		SlaveWriteRegister  byte = 0x01
+		SlaveReadRegister   byte = 0x02
 	)
 	for {
+		if a.debug {
+			log.Printf("Checking SlaveStatusRegister\n")
+		}
 		rx := make([]byte, 1)
 		if err := a.dev.ReadReg(SlaveStatusRegister, rx); err != nil {
 			log.Fatalln(err)
+		}
+		if a.debug {
+			log.Printf("Status Register Contents: %02x\n", rx[0])
 		}
 		if rx[0] == 0x00 {
 			break
 		}
 		time.Sleep(time.Millisecond)
+	}
+	if a.debug {
+		log.Printf("Checking SlaveStatusRegister\n")
+	}
+	if a.debug {
+		log.Printf("WriteReg(%02x,%02x)\n", SlaveWriteRegister, register|0x80)
 	}
 	if err := a.dev.WriteReg(SlaveWriteRegister, []byte{register | 0x80}); err != nil {
 		log.Fatalln(err)
 	}
 
 	for {
+		if a.debug {
+			log.Printf("Checking SlaveStatusRegister\n")
+		}
 		rx := make([]byte, 1)
 		if err := a.dev.ReadReg(SlaveStatusRegister, rx); err != nil {
 			log.Fatalln(err)
+		}
+		if a.debug {
+			log.Printf("Status Register Contents: %02x\n", rx[0])
 		}
 		if rx[0] == 0x00 {
 			break
 		}
 		time.Sleep(time.Millisecond)
 	}
-
+	if a.debug {
+		log.Printf("Writing Data to Slave\n")
+	}
 	if err := a.dev.WriteReg(SlaveWriteRegister, []byte{data}); err != nil {
 		log.Fatalln(err)
 	}
@@ -76,48 +101,77 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 }
 
 func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
+	if a.debug {
+		log.Printf("virtualRegisterRead(%02x)\n", register)
+	}
 	const (
 		SlaveStatusRegister byte = 0x00
 		SlaveWriteRegister  byte = 0x01
 		SlaveReadRegister   byte = 0x02
 	)
 	for {
+		if a.debug {
+			log.Printf("Checking Status Register \n")
+		}
 		rx := make([]byte, 1)
 		if err := a.dev.ReadReg(SlaveStatusRegister, rx); err != nil {
 			log.Fatalln(err)
+		}
+		if a.debug {
+			log.Printf("Status Register Contents: %02x\n", rx[0])
 		}
 		if rx[0] == 0x00 {
 			break
 		}
 		// if there is data pending read it but thats all
 		if rx[0] == 0x01 {
-			rx := make([]byte, 1)
-			if err := a.dev.ReadReg(SlaveStatusRegister, rx); err != nil {
+			discard := make([]byte, 1)
+			if err := a.dev.ReadReg(SlaveStatusRegister, discard); err != nil {
 				log.Fatalln(err)
+			}
+			if a.debug {
+				log.Printf("DataLeftInReadBuffer: %02x\n", discard[0])
 			}
 		}
 		time.Sleep(time.Millisecond)
 	}
-
+	if a.debug {
+		log.Printf("Ready to Write to Status Register\n")
+	}
+	if a.debug {
+		log.Printf("WriteReg(%02x, %02x)\n", SlaveWriteRegister, register)
+	}
 	if err := a.dev.WriteReg(SlaveWriteRegister, []byte{register}); err != nil {
 		log.Fatalln(err)
 	}
 
 	for {
+		if a.debug {
+			log.Printf("Checking Status Register \n")
+		}
 		rx := make([]byte, 1)
 		if err := a.dev.ReadReg(SlaveStatusRegister, rx); err != nil {
 			log.Fatalln(err)
 		}
+		if a.debug {
+			log.Printf("Status Register Contents: %02x\n", rx[0])
+		}
 		if rx[0] == 0x01 {
 			break
 		}
+
 		time.Sleep(time.Millisecond)
+	}
+	if a.debug {
+		log.Printf("Data waiting Read Register\n")
 	}
 	data := make([]byte, 1)
 	if err := a.dev.ReadReg(SlaveReadRegister, data); err != nil {
 		log.Fatalln(err)
 	}
-
+	if a.debug {
+		log.Printf("Data in Read Register: %02x\n", data[0])
+	}
 	return data[0], nil
 }
 
@@ -221,8 +275,9 @@ func (a *AS7276) Close() error {
 // }
 
 func (a *AS7276) setConfig() error {
-	fmt.Println("setConfig")
-
+	if a.debug {
+		fmt.Println("setConfig")
+	}
 	if err := a.virtualRegisterWrite(0x04, 0xE0); err != nil {
 		return err
 	}
