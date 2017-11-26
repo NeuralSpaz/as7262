@@ -63,7 +63,7 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 		if rx[0]&0x03 == 0x00 {
 			break
 		}
-		time.Sleep(time.Millisecond * 10)
+		time.Sleep(time.Millisecond * 50)
 	}
 	// if a.debug {
 	log.Printf("Checking SlaveStatusRegister\n")
@@ -89,7 +89,7 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 		if rx[0]&0x03 == 0x00 {
 			break
 		}
-		time.Sleep(time.Millisecond * 10)
+		time.Sleep(time.Millisecond * 50)
 	}
 	// if a.debug {
 	log.Printf("Writing Data to Slave\n")
@@ -134,7 +134,7 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 			log.Printf("DataLeftInReadBuffer: %02x\n", discard[0])
 			// }
 		}
-		time.Sleep(time.Millisecond * 10)
+		time.Sleep(time.Millisecond * 50)
 	}
 	// if a.debug {
 	log.Printf("Ready to Write to Status Register\n")
@@ -161,7 +161,7 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 			break
 		}
 
-		time.Sleep(time.Millisecond * 10)
+		time.Sleep(time.Millisecond * 50)
 	}
 	// if a.debug {
 	log.Printf("Data waiting Read Register\n")
