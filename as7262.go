@@ -63,7 +63,7 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 		if rx[0] == 0x00 {
 			break
 		}
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Millisecond * 10)
 	}
 	if a.debug {
 		log.Printf("Checking SlaveStatusRegister\n")
@@ -89,7 +89,7 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 		if rx[0] == 0x00 {
 			break
 		}
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Millisecond * 10)
 	}
 	if a.debug {
 		log.Printf("Writing Data to Slave\n")
@@ -134,7 +134,7 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 				log.Printf("DataLeftInReadBuffer: %02x\n", discard[0])
 			}
 		}
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Millisecond * 10)
 	}
 	if a.debug {
 		log.Printf("Ready to Write to Status Register\n")
@@ -161,7 +161,7 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 			break
 		}
 
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Millisecond * 10)
 	}
 	if a.debug {
 		log.Printf("Data waiting Read Register\n")
@@ -255,7 +255,7 @@ func (a *AS7276) Close() error {
 // 			log.Println("checking rx ok")
 // 			return nil
 // 		}
-// 		time.Sleep(time.Millisecond * 10)
+// 		time.Sleep(time.Millisecond *10 * 10)
 // 	}
 // }
 
@@ -271,7 +271,7 @@ func (a *AS7276) Close() error {
 // 			log.Printf("checking tx ok, %02x\n", rx)
 // 			return nil
 // 		}
-// 		time.Sleep(time.Millisecond * 10)
+// 		time.Sleep(time.Millisecond *10 * 10)
 // 	}
 // }
 
@@ -333,7 +333,7 @@ func (a *AS7276) setMode(mode uint8) error {
 func (a *AS7276) dataReady() (bool, error) {
 	fmt.Println("dataReady?")
 	var control byte
-	err := retry(10, time.Millisecond*50, func() (err error) {
+	err := retry(10, time.Millisecond*10*50, func() (err error) {
 		control, err = a.virtualRegisterRead(0x04)
 		return
 	})
@@ -370,7 +370,7 @@ func retry(attempts int, sleep time.Duration, fn func() error) (err error) {
 func (a *AS7276) ReadAll() (Spectrum, error) {
 	fmt.Println("readall")
 
-	// err := retry(10, time.Millisecond*50, func() (err error) {
+	// err := retry(10, time.Millisecond *10*50, func() (err error) {
 	// err := a.clearData()
 
 	// if err != nil {
@@ -388,7 +388,7 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 		log.Println(err)
 	}
 	for !ready {
-		// time.Sleep(time.Millisecond * 50)
+		// time.Sleep(time.Millisecond *10 * 50)
 		ready, err = a.dataReady()
 		if err != nil {
 			log.Println(err)
