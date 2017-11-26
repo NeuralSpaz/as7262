@@ -33,13 +33,13 @@ func main() {
 	// defer sensor2.Close()
 	// log.Println(sensor2)
 
-	// for {
-	<-time.After(time.Second)
-	data, err := sensor.ReadAll()
-	if err != nil {
-		log.Println(err)
+	for {
+		<-time.After(time.Second)
+		data, err := sensor.ReadAll()
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println(data)
+		sensor.LEDoff()
 	}
-	fmt.Println(data)
-	sensor.LEDoff()
-	// }
 }

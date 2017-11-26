@@ -192,6 +192,7 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 // }
 
 func (a *AS7276) Close() error {
+	a.LEDoff()
 	return a.dev.Close()
 }
 
