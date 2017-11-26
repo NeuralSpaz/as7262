@@ -454,12 +454,12 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 	// 	return Spectrum{}, err
 	// }
 
-	v := binary.LittleEndian.Uint16([]byte{vh, vl})
-	b := binary.LittleEndian.Uint16([]byte{bh, bl})
-	g := binary.LittleEndian.Uint16([]byte{gh, gl})
-	y := binary.LittleEndian.Uint16([]byte{yh, yl})
-	o := binary.LittleEndian.Uint16([]byte{oh, ol})
-	r := binary.LittleEndian.Uint16([]byte{rh, rl})
+	v := binary.BigEndian.Uint16([]byte{vh, vl})
+	b := binary.BigEndian.Uint16([]byte{bh, bl})
+	g := binary.BigEndian.Uint16([]byte{gh, gl})
+	y := binary.BigEndian.Uint16([]byte{yh, yl})
+	o := binary.BigEndian.Uint16([]byte{oh, ol})
+	r := binary.BigEndian.Uint16([]byte{rh, rl})
 
 	return Spectrum{v, b, g, y, o, r}, nil
 	// return Spectrum{}, nil
