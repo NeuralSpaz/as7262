@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"math"
 	"time"
 
 	"golang.org/x/exp/io/i2c"
@@ -18,7 +19,8 @@ type AS7276 struct {
 
 // Spectrum (450nm, 500nm, 550nm, 570nm, 600nm, 650nm).
 type Spectrum struct {
-	V, B, G, Y, O, R uint16
+	Vraw, Braw, Graw, Yraw, Oraw, Rraw uint16
+	Vcal, Bcal, Gcal, Ycal, Ocal, Rcal float32
 }
 
 func NewSensor(bus string, opts ...func(*AS7276) error) (*AS7276, error) {
@@ -449,11 +451,6 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 		return Spectrum{}, err
 	}
 
-	// LED OFF
-	// if err := a.writeReg(0x07, []byte{0x00}); err != nil {
-	// 	return Spectrum{}, err
-	// }
-
 	v := binary.BigEndian.Uint16([]byte{vh, vl})
 	b := binary.BigEndian.Uint16([]byte{bh, bl})
 	g := binary.BigEndian.Uint16([]byte{gh, gl})
@@ -461,7 +458,123 @@ func (a *AS7276) ReadAll() (Spectrum, error) {
 	o := binary.BigEndian.Uint16([]byte{oh, ol})
 	r := binary.BigEndian.Uint16([]byte{rh, rl})
 
-	return Spectrum{v, b, g, y, o, r}, nil
+	// GET Calibrated Float32
+
+	vcal0, err := a.virtualRegisterRead(0x14)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	vcal1, err := a.virtualRegisterRead(0x15)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	vcal2, err := a.virtualRegisterRead(0x16)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	vcal3, err := a.virtualRegisterRead(0x17)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	vcal32 := binary.BigEndian.Uint32([]byte{vcal0, vcal1, vcal2, vcal3})
+	vcal := math.Float32frombits(vcal32)
+
+	bcal0, err := a.virtualRegisterRead(0x18)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	bcal1, err := a.virtualRegisterRead(0x19)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	bcal2, err := a.virtualRegisterRead(0x1A)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	bcal3, err := a.virtualRegisterRead(0x1B)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	bcal32 := binary.BigEndian.Uint32([]byte{bcal0, bcal1, bcal2, bcal3})
+	bcal := math.Float32frombits(bcal32)
+
+	gcal0, err := a.virtualRegisterRead(0x1C)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	gcal1, err := a.virtualRegisterRead(0x1D)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	gcal2, err := a.virtualRegisterRead(0x1E)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	gcal3, err := a.virtualRegisterRead(0x1F)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	gcal32 := binary.BigEndian.Uint32([]byte{gcal0, gcal1, gcal2, gcal3})
+	gcal := math.Float32frombits(gcal32)
+
+	ycal0, err := a.virtualRegisterRead(0x20)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ycal1, err := a.virtualRegisterRead(0x21)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ycal2, err := a.virtualRegisterRead(0x22)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ycal3, err := a.virtualRegisterRead(0x23)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ycal32 := binary.BigEndian.Uint32([]byte{ycal0, ycal1, ycal2, ycal3})
+	ycal := math.Float32frombits(ycal32)
+
+	ocal0, err := a.virtualRegisterRead(0x24)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ocal1, err := a.virtualRegisterRead(0x25)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ocal2, err := a.virtualRegisterRead(0x26)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ocal3, err := a.virtualRegisterRead(0x27)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	ocal32 := binary.BigEndian.Uint32([]byte{ocal0, ocal1, ocal2, ocal3})
+	ocal := math.Float32frombits(ocal32)
+
+	rcal0, err := a.virtualRegisterRead(0x28)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	rcal1, err := a.virtualRegisterRead(0x29)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	rcal2, err := a.virtualRegisterRead(0x2A)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	rcal3, err := a.virtualRegisterRead(0x2B)
+	if err != nil {
+		return Spectrum{}, err
+	}
+	rcal32 := binary.BigEndian.Uint32([]byte{rcal0, rcal1, rcal2, rcal3})
+	rcal := math.Float32frombits(rcal32)
+
+	return Spectrum{v, b, g, y, o, r, vcal, bcal, gcal, ycal, ocal, rcal}, nil
 	// return Spectrum{}, nil
 }
 
