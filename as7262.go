@@ -11,7 +11,7 @@ import (
 	// "github.com/NeuralSpaz/i2cmux"
 )
 
-type AS7276 struct {
+type AS7262 struct {
 	dev *i2cmux.Device
 	// dev   *i2c.Device
 	debug bool
@@ -23,8 +23,8 @@ type Spectrum struct {
 	Vcal, Bcal, Gcal, Ycal, Ocal, Rcal float32
 }
 
-func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7276) error) (*AS7276, error) {
-	a := new(AS7276)
+func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7262) error) (*AS7262, error) {
+	a := new(AS7262)
 
 	for _, option := range opts {
 		option(a)
@@ -38,8 +38,8 @@ func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7276) error) 
 	return a, nil
 }
 
-// func NewSensor(bus string, opts ...func(*AS7276) error) (*AS7276, error) {
-// 	a := new(AS7276)
+// func NewSensor(bus string, opts ...func(*AS7262) error) (*AS7262, error) {
+// 	a := new(AS7262)
 
 // 	for _, option := range opts {
 // 		option(a)
@@ -57,7 +57,7 @@ func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7276) error) 
 // 	return a, nil
 // }
 
-func (a *AS7276) virtualRegisterWrite(register, data byte) error {
+func (a *AS7262) virtualRegisterWrite(register, data byte) error {
 	// if a.debug {
 	// log.Printf("virtualRegisterWrite(%02x,%02x)\n", register, data)
 	// }
@@ -118,7 +118,7 @@ func (a *AS7276) virtualRegisterWrite(register, data byte) error {
 	return nil
 }
 
-func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
+func (a *AS7262) virtualRegisterRead(register byte) (byte, error) {
 	// if a.debug {
 	// log.Printf("virtualRegisterRead(%02x)\n", register)
 	// }
@@ -193,8 +193,8 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 	return data[0], nil
 }
 
-// func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7276) error) (*AS7276, error) {
-// 	a := new(AS7276)
+// func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7262) error) (*AS7262, error) {
+// 	a := new(AS7262)
 
 // 	for _, option := range opts {
 // 		option(a)
@@ -208,7 +208,7 @@ func (a *AS7276) virtualRegisterRead(register byte) (byte, error) {
 // 	return a, nil
 // }
 
-func (a *AS7276) Close() error {
+func (a *AS7262) Close() error {
 	a.LEDoff()
 	return a.dev.Close()
 }
@@ -221,7 +221,7 @@ func (a *AS7276) Close() error {
 // 	I2C_AS72XX_SLAVE_RX_VALID   = 0x01
 // )
 
-// func (a *AS7276) writeReg(reg byte, buf []byte) error {
+// func (a *AS7262) writeReg(reg byte, buf []byte) error {
 // 	log.Println("write reg")
 // 	if err := a.checkTxPending(); err != nil {
 // 		return err
@@ -241,7 +241,7 @@ func (a *AS7276) Close() error {
 
 // }
 
-// func (a *AS7276) readReg(reg byte) (byte, error) {
+// func (a *AS7262) readReg(reg byte) (byte, error) {
 // 	log.Println("read reg")
 // 	if err := a.checkTxPending(); err != nil {
 // 		return 0, err
@@ -261,7 +261,7 @@ func (a *AS7276) Close() error {
 
 // }
 
-// func (a *AS7276) checkRxPending() error {
+// func (a *AS7262) checkRxPending() error {
 // 	for {
 // 		log.Println("checking rx pending")
 // 		rx := make([]byte, 1)
@@ -277,7 +277,7 @@ func (a *AS7276) Close() error {
 // 	}
 // }
 
-// func (a *AS7276) checkTxPending() error {
+// func (a *AS7262) checkTxPending() error {
 // 	for {
 // 		log.Println("checking tx pending")
 // 		rx := make([]byte, 1)
@@ -293,7 +293,7 @@ func (a *AS7276) Close() error {
 // 	}
 // }
 
-func (a *AS7276) setConfig() error {
+func (a *AS7262) setConfig() error {
 	if a.debug {
 		fmt.Println("setConfig")
 	}
@@ -312,19 +312,19 @@ func (a *AS7276) setConfig() error {
 	return err
 }
 
-func (a *AS7276) LEDoff() error {
+func (a *AS7262) LEDoff() error {
 	// fmt.Println("ledoff")
 	err := a.virtualRegisterWrite(0x07, 0x00)
 	return err
 }
 
-func (a *AS7276) LEDon() error {
+func (a *AS7262) LEDon() error {
 	// fmt.Println("ledon")
 	err := a.virtualRegisterWrite(0x07, 0x09)
 	return err
 }
 
-// func (a *AS7276) clearData() error {
+// func (a *AS7262) clearData() error {
 // 	fmt.Println("clearData")
 // 	value, err := a.virtualRegisterRead(0x04)
 // 	if err != nil {
@@ -338,7 +338,7 @@ func (a *AS7276) LEDon() error {
 // 	return nil
 // }
 
-func (a *AS7276) setMode(mode uint8) error {
+func (a *AS7262) setMode(mode uint8) error {
 	fmt.Println("setmode")
 
 	if mode > 3 {
@@ -357,7 +357,7 @@ func (a *AS7276) setMode(mode uint8) error {
 	return nil
 }
 
-func (a *AS7276) dataReady() (bool, error) {
+func (a *AS7262) dataReady() (bool, error) {
 	// fmt.Println("dataReady?")
 	var control byte
 	err := retry(10, time.Millisecond*10*50, func() (err error) {
@@ -394,7 +394,7 @@ func retry(attempts int, sleep time.Duration, fn func() error) (err error) {
 	return fmt.Errorf("after %d attempts, last error: %s", attempts, err)
 }
 
-func (a *AS7276) ReadAll() (Spectrum, error) {
+func (a *AS7262) ReadAll() (Spectrum, error) {
 	fmt.Println("readall")
 	if err := a.setConfig(); err != nil {
 		log.Println(err)

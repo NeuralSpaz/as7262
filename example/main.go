@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/NeuralSpaz/as7262"
+	"github.com/NeuralSpaz/as7263"
 	"github.com/NeuralSpaz/pca9548a"
 )
 
@@ -21,13 +22,13 @@ func main() {
 	}
 	defer zero.Close()
 
-	one, err := as7262.NewSensor(mux, 1)
+	one, err := as7263.NewSensor(mux, 1)
 	if err != nil {
 		log.Panic(err)
 	}
 	defer one.Close()
 
-	six, err := as7262.NewSensor(mux, 6)
+	six, err := as7263.NewSensor(mux, 6)
 	if err != nil {
 		log.Panic(err)
 	}
