@@ -286,9 +286,9 @@ func (a *AS7276) setConfig() error {
 	if err := a.virtualRegisterWrite(0x04, 0x3C); err != nil {
 		return err
 	}
-	if err := a.virtualRegisterWrite(0x06, 0xFF); err != nil {
-		return err
-	}
+	// if err := a.virtualRegisterWrite(0x06, 0xFF); err != nil {
+	// 	return err
+	// }
 	// LED OFF
 	if err := a.virtualRegisterWrite(0x07, 0x00); err != nil {
 		return err
