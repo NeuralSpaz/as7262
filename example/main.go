@@ -60,28 +60,28 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(zeroData)
+		fmt.Printf("%+#v\n", zeroData)
 		zero.LEDoff()
 
 		oneData, err := one.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(oneData)
+		fmt.Printf("%+#v\n", oneData)
 		one.LEDoff()
 
 		sixData, err := six.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(sixData)
+		fmt.Printf("%+#v\n", sixData)
 		six.LEDoff()
 
 		sevenData, err := seven.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(sevenData)
+		fmt.Printf("%+#v\n", sevenData)
 		seven.LEDoff()
 	}
 }
