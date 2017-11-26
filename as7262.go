@@ -310,7 +310,6 @@ func (a *AS7276) setConfig() error {
 	// LED OFF
 	err := a.LEDoff()
 	return err
-
 }
 
 func (a *AS7276) LEDoff() error {
@@ -397,6 +396,9 @@ func retry(attempts int, sleep time.Duration, fn func() error) (err error) {
 
 func (a *AS7276) ReadAll() (Spectrum, error) {
 	fmt.Println("readall")
+	if err := a.setConfig(); err != nil {
+		log.Println(err)
+	}
 
 	if err := a.LEDon(); err != nil {
 		log.Println(err)
