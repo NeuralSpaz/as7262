@@ -72,7 +72,9 @@ func main() {
 		six.Request()
 		seven.Request()
 		end := time.Now()
-		<-time.After(end.Sub(start) - waitTime)
+		dwell := end.Sub(start) - waitTime
+		fmt.Println(dwell)
+		<-time.After(dwell)
 
 		zeroData, err := zero.ReadAll()
 		if err != nil {
