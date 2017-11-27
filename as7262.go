@@ -85,6 +85,15 @@ func (a *AS7262) virtualRegisterWrite(register, data byte) error {
 		if rx[0]&0x03 == 0x00 {
 			break
 		}
+		if rx[0]&0x03 == 0x01 {
+			discard := make([]byte, 1)
+			if err := a.dev.ReadReg(SlaveStatusRegister, discard); err != nil {
+				log.Fatalln(err)
+			}
+			// if a.debug {
+			// log.Printf("DataLeftInReadBuffer: %02x\n", discard[0])
+			// }
+		}
 		time.Sleep(time.Millisecond)
 	}
 	// if a.debug {
@@ -111,6 +120,7 @@ func (a *AS7262) virtualRegisterWrite(register, data byte) error {
 		if rx[0]&0x03 == 0x00 {
 			break
 		}
+
 		time.Sleep(time.Millisecond)
 	}
 	// if a.debug {
