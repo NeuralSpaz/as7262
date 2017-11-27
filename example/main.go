@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/NeuralSpaz/as7262"
@@ -13,6 +14,15 @@ import (
 )
 
 func main() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	// stop := make(chan bool)
+	// go func() {
+	// 	for sig := range c {
+	// 		// sig is a ^C, handle it
+	// 	}
+	// }()
+
 	fmt.Println("starting sensor")
 	mux, err := pca9548a.NewMux("/dev/i2c-1")
 	defer mux.Close()
@@ -113,6 +123,23 @@ func main() {
 		anolyteNIR <- sixData
 
 		anolyteVis <- sevenData
+
+		select {
+		case x, ok := <-c:
+			if ok {
+				fmt.Printf("Asked to quit, now exiting\n")
+				zero.Close()
+				one.Close()
+				six.Close()
+				seven.Close()
+				mux.Close()
+				os.Exit(1)
+			} else {
+				fmt.Println("Channel closed!")
+			}
+		default:
+			fmt.Println("No value ready, moving on.")
+		}
 
 	}
 }
