@@ -66,6 +66,14 @@ func main() {
 
 	for {
 		<-time.After(time.Second)
+		start := time.Now()
+		waitTime := zero.Request()
+		one.Request()
+		six.Request()
+		seven.Request()
+		end := time.Now()
+		<-time.After(end.Sub(start) - waitTime)
+
 		zeroData, err := zero.ReadAll()
 		if err != nil {
 			log.Println(err)

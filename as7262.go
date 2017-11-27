@@ -411,8 +411,7 @@ func retry(attempts int, sleep time.Duration, fn func() error) (err error) {
 	return fmt.Errorf("after %d attempts, last error: %s", attempts, err)
 }
 
-func (a *AS7262) ReadAll() (Spectrum, error) {
-	fmt.Println("readall")
+func (a *AS7262) Request() time.Duration {
 	if err := a.setConfig(); err != nil {
 		log.Println(err)
 	}
@@ -424,6 +423,12 @@ func (a *AS7262) ReadAll() (Spectrum, error) {
 	if err := a.setMode(3); err != nil {
 		log.Println(err)
 	}
+	return time.Millisecond * 1443
+}
+
+func (a *AS7262) ReadAll() (Spectrum, error) {
+	fmt.Println("readall")
+
 	ready, err := a.dataReady()
 	if err != nil {
 		log.Println(err)
