@@ -19,7 +19,9 @@ type AS7262 struct {
 
 // Spectrum (450nm, 500nm, 550nm, 570nm, 600nm, 650nm).
 type Spectrum struct {
-	Counts []Count `json:"count"`
+	Counts   []Count   `json:"count"`
+	Time     time.Time `json:"time"`
+	Unixnano int64     `json:"unixnano"`
 }
 
 type Count struct {
@@ -624,7 +626,8 @@ func (a *AS7262) ReadAll() (Spectrum, error) {
 	// Raw: v}}{}
 
 	// return Spectrum{v, b, g, y, o, r, vcal, bcal, gcal, ycal, ocal, rcal}, nil
-	return Spectrum{[]Count{
+	now := time.Now()
+	return Spectrum{Time: now, Unixnano: now.UnixNano(), Counts: []Count{
 		{Wavelength: 450, Value: float64(vcal), Raw: v},
 		{Wavelength: 500, Value: float64(bcal), Raw: b},
 		{Wavelength: 550, Value: float64(gcal), Raw: g},
