@@ -19,8 +19,13 @@ type AS7262 struct {
 
 // Spectrum (450nm, 500nm, 550nm, 570nm, 600nm, 650nm).
 type Spectrum struct {
-	Vraw, Braw, Graw, Yraw, Oraw, Rraw uint16
-	Vcal, Bcal, Gcal, Ycal, Ocal, Rcal float32
+	count []Count `json:"count"`
+}
+
+type Count struct {
+	Wavelength float64 `json:"wavelength"`
+	Value      float64 `json:"value"`
+	Raw        uint16  `json:"raw"`
 }
 
 func NewSensor(mux i2cmux.Multiplexer, port uint8, opts ...func(*AS7262) error) (*AS7262, error) {
@@ -591,8 +596,32 @@ func (a *AS7262) ReadAll() (Spectrum, error) {
 	rcal32 := binary.BigEndian.Uint32([]byte{rcal0, rcal1, rcal2, rcal3})
 	rcal := math.Float32frombits(rcal32)
 
-	return Spectrum{v, b, g, y, o, r, vcal, bcal, gcal, ycal, ocal, rcal}, nil
-	// return Spectrum{}, nil
+	// Spectrum (450nm, 500nm, 550nm, 570nm, 600nm, 650nm).
+
+	// f := Spectrum{[]Count{
+	// 	{Wavelength: 450, Value: float64(vcal), Raw: v},
+	// 	{Wavelength: 500, Value: float64(bcal), Raw: b},
+	// 	{Wavelength: 550, Value: float64(gcal), Raw: g},
+	// 	{Wavelength: 570, Value: float64(ycal), Raw: y},
+	// 	{Wavelength: 600, Value: float64(ocal), Raw: o},
+	// 	{Wavelength: 650, Value: float64(rcal), Raw: r},
+	// }}, nil
+
+	// spectrum := Spectrum{[]Count{}, {}}
+	// return Spectrum{[]Count{}{Wavelength: 420, Value: 12.2}}
+	// Wavelength: 450,
+	// Value: vcal,
+	// Raw: v}}{}
+
+	// return Spectrum{v, b, g, y, o, r, vcal, bcal, gcal, ycal, ocal, rcal}, nil
+	return Spectrum{[]Count{
+		{Wavelength: 450, Value: float64(vcal), Raw: v},
+		{Wavelength: 500, Value: float64(bcal), Raw: b},
+		{Wavelength: 550, Value: float64(gcal), Raw: g},
+		{Wavelength: 570, Value: float64(ycal), Raw: y},
+		{Wavelength: 600, Value: float64(ocal), Raw: o},
+		{Wavelength: 650, Value: float64(rcal), Raw: r},
+	}}, nil
 }
 
 func clearBit(n byte, pos uint8) byte {
