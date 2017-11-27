@@ -424,7 +424,7 @@ func (a *AS7262) Request() time.Duration {
 	if err := a.setMode(3); err != nil {
 		log.Println(err)
 	}
-	return time.Millisecond * 1443
+	return time.Millisecond * 1450
 }
 
 func (a *AS7262) ReadAll() (Spectrum, error) {
