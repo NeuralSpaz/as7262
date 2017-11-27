@@ -72,6 +72,7 @@ func main() {
 		}
 		// fmt.Printf("%+#v\n", zeroData)
 		zero.LEDoff()
+		catholyteVis <- zeroData
 
 		oneData, err := one.ReadAll()
 		if err != nil {
@@ -79,6 +80,7 @@ func main() {
 		}
 		// fmt.Printf("%+#v\n", oneData)
 		one.LEDoff()
+		catholyteNIR <- oneData
 
 		sixData, err := six.ReadAll()
 		if err != nil {
@@ -86,6 +88,7 @@ func main() {
 		}
 		// fmt.Printf("%+#v\n", sixData)
 		six.LEDoff()
+		anolyteNIR <- sixData
 
 		sevenData, err := seven.ReadAll()
 		if err != nil {
@@ -93,10 +96,6 @@ func main() {
 		}
 		// fmt.Printf("%+#v\n", sevenData)
 		seven.LEDoff()
-
-		catholyteVis <- zeroData
-		catholyteNIR <- oneData
-		anolyteNIR <- sixData
 		anolyteVis <- sevenData
 
 	}
