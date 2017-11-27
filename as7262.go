@@ -19,7 +19,7 @@ type AS7262 struct {
 
 // Spectrum (450nm, 500nm, 550nm, 570nm, 600nm, 650nm).
 type Spectrum struct {
-	count []Count `json:"count"`
+	Counts []Count `json:"count"`
 }
 
 type Count struct {
