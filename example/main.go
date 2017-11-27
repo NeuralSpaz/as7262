@@ -92,35 +92,45 @@ func main() {
 
 		<-time.After(waitTime - elapsed)
 
+		zeroreadstart := time.Now()
 		zeroData, err := zero.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
 		// fmt.Printf("%+#v\n", zeroData)
 		zero.LEDoff()
-		readstart := time.Now()
+		zeroreadElapse := time.Now().Sub(zeroreadstart)
+		fmt.Println("read duration: ", zeroreadElapse)
+
+		onereadstart := time.Now()
 		oneData, err := one.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
 		// fmt.Printf("%+#v\n", oneData)
 		one.LEDoff()
-		readElapse := time.Now().Sub(readstart)
-		fmt.Println("read duration: ", readElapse)
+		onereadElapse := time.Now().Sub(onereadstart)
+		fmt.Println("one read duration: ", onereadElapse)
 
+		sixreadstart := time.Now()
 		sixData, err := six.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
 		// fmt.Printf("%+#v\n", sixData)
 		six.LEDoff()
+		sixreadElapse := time.Now().Sub(sixreadstart)
+		fmt.Println("six read duration: ", sixreadElapse)
 
+		sevenreadstart := time.Now()
 		sevenData, err := seven.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
 		// fmt.Printf("%+#v\n", sevenData)
 		seven.LEDoff()
+		sevenreadElapse := time.Now().Sub(sevenreadstart)
+		fmt.Println("seven read duration: ", sevenreadElapse)
 
 		go func() {
 			catholyteVis <- zeroData
