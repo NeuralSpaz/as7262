@@ -94,13 +94,15 @@ func main() {
 		}
 		// fmt.Printf("%+#v\n", zeroData)
 		zero.LEDoff()
-
+		readstart := time.Now()
 		oneData, err := one.ReadAll()
 		if err != nil {
 			log.Println(err)
 		}
 		// fmt.Printf("%+#v\n", oneData)
 		one.LEDoff()
+		readElapse := time.Now().Sub(readstart)
+		fmt.Println("read duration: ", readElapse)
 
 		sixData, err := six.ReadAll()
 		if err != nil {
