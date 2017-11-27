@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/NeuralSpaz/as7262"
 	"github.com/NeuralSpaz/as7263"
@@ -64,7 +65,7 @@ func main() {
 	c.BindSendChan("anolyte.nir", anolyteNIR)
 
 	for {
-		// <-time.After(time.Second)
+		<-time.After(time.Second)
 		zeroData, err := zero.ReadAll()
 		if err != nil {
 			log.Println(err)
