@@ -75,7 +75,7 @@ func main() {
 	c.BindSendChan("anolyte.nir", anolyteNIR)
 
 	for {
-		<-time.After(time.Second)
+		// <-time.After(time.Second)
 		start := time.Now()
 		waitTime := zero.Request()
 		one.Request()
@@ -116,18 +116,18 @@ func main() {
 		// fmt.Printf("%+#v\n", sevenData)
 		seven.LEDoff()
 
-		catholyteVis <- zeroData
-
-		catholyteNIR <- oneData
-
-		anolyteNIR <- sixData
-
-		anolyteVis <- sevenData
+		go func() {
+			catholyteVis <- zeroData
+			catholyteNIR <- oneData
+			anolyteNIR <- sixData
+			anolyteVis <- sevenData
+		}()
 
 		select {
 		case _, ok := <-sig:
 			if ok {
 				fmt.Printf("Asked to quit, now exiting\n")
+				time.Sleep(time.Second * 1)
 				zero.Close()
 				one.Close()
 				six.Close()
