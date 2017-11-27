@@ -14,8 +14,8 @@ import (
 )
 
 func main() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
 	// stop := make(chan bool)
 	// go func() {
 	// 	for sig := range c {
@@ -125,7 +125,7 @@ func main() {
 		anolyteVis <- sevenData
 
 		select {
-		case x, ok := <-c:
+		case _, ok := <-sig:
 			if ok {
 				fmt.Printf("Asked to quit, now exiting\n")
 				zero.Close()
